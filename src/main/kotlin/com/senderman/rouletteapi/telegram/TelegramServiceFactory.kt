@@ -13,10 +13,11 @@ class TelegramServiceFactory {
             if (token == cachedToken) return cachedService!!
 
             cachedToken = token
-            return Retrofit.Builder()
+            cachedService = Retrofit.Builder()
                     .baseUrl("https://api.telegram.org/bot$token/")
                     .build()
                     .create(TelegramService::class.java)
+            return cachedService!!
         }
     }
 }
