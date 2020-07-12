@@ -41,18 +41,21 @@ class UsersController(
             @RequestParam(value = "coins") coins: Int,
             @RequestParam(value = "token") token: String
     ): TransactionResult {
-        mongoOps.findOne(findUserQuery(userId), User::class.java)
-                ?: return TransactionResult(false, "User not exists")
+        val user = mongoOps.findOne(findUserQuery(userId), User::class.java)
+                ?: return TransactionResult(false, "User does not exist")
+
+        if (user.coins + coins < 0) return TransactionResult(false, "Not enough coins")
 
         val telegram = TelegramServiceFactory.getService(token)
-        val code = telegram.sendMessage(channelId, "Новая транкзация выполняется...").execute().code()
-        if (code != 200) {
-            return TransactionResult(false, "Telegram verification error")
-        }
+        val code = telegram.sendMessage(channelId, "<b>Новая транкзация выполняется...</b>").execute().code()
+        if (code != 200) return TransactionResult(false, "Telegram verification error")
 
         return try {
             mongoOps.updateFirst(findUserQuery(userId), Update().inc(coinsKey, coins), User::class.java)
-            telegram.sendMessage(channelId, "Транкзация на перевод $coins монеток пользователю $userId успешна!").execute()
+            telegram.sendMessage(channelId,
+                    "Транкзация на перевод $coins монеток пользователю $userId успешна!\n" +
+                            "Теперь у пользователя ${user.coins + coins} монеток!")
+                    .execute()
             TransactionResult(true, "OK")
         } catch (e: Exception) {
             TransactionResult(false, "Error: $e")
