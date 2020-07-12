@@ -21,7 +21,7 @@ class RouletteapiApplication {
     fun mongoClient(): MongoClient = MongoClients.create(mongoUri)
 
     @Bean
-    fun mongoTemplate(): MongoTemplate = MongoTemplate(mongoClient(), database)
+    fun mongoTemplate(): MongoTemplate = MongoTemplate(MongoClients.create(mongoUri), database)
 
 }
 
