@@ -1,10 +1,12 @@
 package com.senderman.rouletteapi.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.TypeAlias
 import org.springframework.data.mongodb.core.mapping.Document
 
 class UserStatus(
+        @JsonProperty("user_id")
         val userId: Int,
         val coins: Int
 )
