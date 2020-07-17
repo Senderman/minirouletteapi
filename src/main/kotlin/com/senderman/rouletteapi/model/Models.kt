@@ -1,16 +1,25 @@
 package com.senderman.rouletteapi.model
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.TypeAlias
 import org.springframework.data.mongodb.core.mapping.Document
 
+class UserStatus(
+        val userId: Int,
+        val coins: Int
+)
+
+class UserBalance(val coins: Int)
+
 @Document("users")
+@TypeAlias("user")
 data class User(
         @Id
         val id: String,
 
         val userId: Int,
 
-        val coins: Int,
+        var coins: Int,
 
         val lastReqDate: Int,
 

@@ -9,21 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.data.mongodb.core.MongoTemplate
 
 @SpringBootApplication
-class RouletteapiApplication {
-
-    @Value("\${mongodbUri}")
-    lateinit var mongoUri: String
-
-    @Value("\${database}")
-    lateinit var database: String
-
-    @Bean
-    fun mongoClient(): MongoClient = MongoClients.create(mongoUri)
-
-    @Bean
-    fun mongoTemplate(): MongoTemplate = MongoTemplate(MongoClients.create(mongoUri), database)
-
-}
+class RouletteapiApplication
 
 fun main(args: Array<String>) {
     runApplication<RouletteapiApplication>(*args)
