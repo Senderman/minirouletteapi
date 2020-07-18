@@ -2,8 +2,8 @@ package com.senderman.rouletteapi.model
 
 import org.springframework.data.mongodb.repository.MongoRepository
 
-interface UsersRepository:MongoRepository<User, String> {
+interface UsersRepository : MongoRepository<User, String> {
 
-    fun findByUserId(userId:Int):User?
+    fun findByUserId(userId: Int): User?
 
 }

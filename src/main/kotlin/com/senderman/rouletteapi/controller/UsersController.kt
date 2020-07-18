@@ -3,7 +3,7 @@ package com.senderman.rouletteapi.controller
 import com.senderman.rouletteapi.model.UserBalance
 import com.senderman.rouletteapi.model.UserStatus
 import com.senderman.rouletteapi.model.UsersRepository
-import com.senderman.rouletteapi.telegram.TelegramServiceFactory
+import com.senderman.rouletteapi.telegram.TelegramService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -43,13 +43,13 @@ class UsersController(
 
         if (coins < 0 && user.coins + coins < 400)
             throw ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+                    HttpStatus.FORBIDDEN,
                     "Not enough coins will remain on balance (must be at least 400)"
             )
 
-        val telegram = TelegramServiceFactory.getService(token)
-        val code = telegram.sendMessage(channelId, "<b>Новая транзакция выполняется...</b>").execute().code()
-        if (code != 200) throw ResponseStatusException(
+        val telegram = TelegramService.getService(token)
+        val code = telegram.sendMessage(channelId, "<b>Новая транзакция выполняется...</b>").statusCode
+        if (code != HttpStatus.OK) throw ResponseStatusException(
                 HttpStatus.UNAUTHORIZED,
                 "Telegram Verification error"
         )
@@ -60,7 +60,6 @@ class UsersController(
             telegram.sendMessage(channelId,
                     "Транзакция на перевод $coins монеток пользователю $userId успешна!\n" +
                             "Теперь у пользователя ${user.coins} монеток!")
-                    .execute()
             return UserStatus(user.userId, user.coins)
         } catch (e: Exception) {
             throw ResponseStatusException(

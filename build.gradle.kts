@@ -18,9 +18,6 @@ repositories {
 }
 
 dependencies {
-
-	implementation("com.squareup.retrofit2:retrofit:2.9.0")
-
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

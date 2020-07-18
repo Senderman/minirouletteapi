@@ -1,16 +1,29 @@
 package com.senderman.rouletteapi.telegram
 
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Query
+import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.http.ResponseEntity
 
-interface TelegramService {
+class TelegramService(token: String) {
 
-    @GET("sendMessage")
-    fun sendMessage(
-            @Query("chat_id") chatId: Long,
-            @Query("text") text: String,
-            @Query("parse_mode") parseMode: String = "HTML"
-    ): Call<Unit>
+    private val template = RestTemplateBuilder().rootUri("https://api.telegram.org/bot$token").build()
 
+    fun sendMessage(chatId: Long, text: String): ResponseEntity<Unit> =
+            template.getForEntity(
+                    "/sendMessage?chat_id=$chatId&text=$text&parse_mode=HTML",
+                    Unit::class.java
+            )
+
+    companion object {
+        private var cachedToken: String? = null
+        private var cachedService: TelegramService? = null
+
+        fun getService(token: String): TelegramService {
+            if (token == cachedToken) return cachedService!!
+
+            cachedToken = token
+            cachedService = TelegramService(token)
+            return cachedService!!
+        }
+
+    }
 }
